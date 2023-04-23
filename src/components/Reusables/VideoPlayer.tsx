@@ -7,6 +7,7 @@ import ic_mic_off from '/public/svgs/ic_mic_off.svg';
 import ic_video_off from '/public/svgs/ic_video_off.svg';
 import { SocketContext } from '../../../context/SocketContext';
 import { useContext } from 'react';
+import getFirstLetters from '../../../utils/helpers/getFirstLLetters';
 
 const VideoPlayer = () => {
   const {
@@ -24,9 +25,6 @@ const VideoPlayer = () => {
     toggleCam,
   } = useContext(SocketContext);
 
-  console.log('isVideo', myVideo, stream);
-
-
   return (
     <Wrapper>
       <Inner>
@@ -35,7 +33,7 @@ const VideoPlayer = () => {
           {!isVideo ? (
             <video ref={myVideo} playsInline muted autoPlay />
           ) : (
-            <Abbreviation>{name[0] || 'Name'[0]}</Abbreviation>
+            <Abbreviation>{getFirstLetters(name || 'Name')}</Abbreviation>
           )}
           <NameCtn>
             {name || 'Name'}
@@ -57,11 +55,27 @@ const VideoPlayer = () => {
         {/*User's video player */}
         {callAccepted && !callEnded && (
           <VideoContainer>
-            <video playsInline muted ref={null} autoPlay />
+            {!isVideo ? (
+              <video ref={myVideo} playsInline muted autoPlay />
+            ) : (
+              <Abbreviation>{getFirstLetters(name || 'Name')}</Abbreviation>
+            )}
             <NameCtn>
               {call.name || 'Name'}
               <Image src={ic_online} alt="ic_online" />
             </NameCtn>
+            <AccessButtonContainer>
+              <AccessButton onClick={toggleCam}>
+                {isVideo ? (
+                  <Image src={ic_video} alt="ic_video" />
+                ) : (
+                  <Image src={ic_video_off} alt="ic_video_off" />
+                )}
+              </AccessButton>
+              <AccessButton onClick={initializeAudio}>
+                <Image src={ic_microphone} alt="ic_mic" />
+              </AccessButton>
+            </AccessButtonContainer>
           </VideoContainer>
         )}
       </Inner>

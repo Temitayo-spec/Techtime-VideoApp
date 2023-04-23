@@ -21,6 +21,11 @@ let SocketContext = createContext({
   },
   isVideo: false,
   toggleCam: () => {},
+  leaveCall: () => {},
+  callUser: (arg0: any) => {},
+  me: '',
+  setName: (name: any) => {},
+  answerCall: () => {},
 });
 
 const socket = io('http://localhost:5000');
@@ -78,10 +83,9 @@ const ContextProvider = ({ children }: Props) => {
     });
 
     return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
+      socket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializeAudio = () => {

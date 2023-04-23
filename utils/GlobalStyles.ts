@@ -10,6 +10,7 @@ export const styles = createGlobalStyle`
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    font-family: 'Montserrat', sans-serif;
   }
 
   html,
@@ -18,7 +19,6 @@ export const styles = createGlobalStyle`
     min-height: 100vh;
     overflow-x: hidden;
     background: var(--background-color);
-    font-family: 'Montserrat', sans-serif;
   }
 
   a {
