@@ -28,7 +28,7 @@ let SocketContext = createContext({
   answerCall: () => {},
 });
 
-const socket = io('http://localhost:5000');
+const socket = io('https://videoapp-backend-production.up.railway.app');
 
 interface Props {
   children: React.ReactNode;
@@ -72,13 +72,8 @@ const ContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     initializeCamera();
-    socket.on('me', (id) => {
-      console.log('My ID:', id);
-      setMe(id);
-    });
-
+    socket.on('me', (id: string) => setMe(id));
     socket.on('calluser', ({ from, name: callerName, signal }) => {
-      console.log('Received call from:', from);
       setCall({ isReceivedCall: true, from, name: callerName, signal });
     });
 

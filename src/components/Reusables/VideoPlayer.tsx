@@ -11,7 +11,6 @@ import getFirstLetters from '../../../utils/helpers/getFirstLLetters';
 
 const VideoPlayer = () => {
   const {
-    initializeCamera,
     initializeAudio,
     name,
     callAccepted,
@@ -56,9 +55,9 @@ const VideoPlayer = () => {
         {callAccepted && !callEnded && (
           <VideoContainer>
             {!isVideo ? (
-              <video ref={myVideo} playsInline muted autoPlay />
+              <video ref={userVideo} playsInline muted autoPlay />
             ) : (
-              <Abbreviation>{getFirstLetters(name || 'Name')}</Abbreviation>
+              <Abbreviation>{getFirstLetters(call.name || 'Name')}</Abbreviation>
             )}
             <NameCtn>
               {call.name || 'Name'}
