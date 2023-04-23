@@ -3,7 +3,25 @@ import React, { createContext, useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import Peer from 'simple-peer';
 
-let SocketContext = createContext(null);
+let SocketContext = createContext({
+  initializeCamera: () => {},
+  initializeAudio: () => {},
+  disconnectCamera: () => {},
+  disconnectAudio: () => {},
+  name: '',
+  callAccepted: false,
+  myVideo: null,
+  userVideo: null,
+  callEnded: false,
+  stream: null,
+  call: {
+    isReceivedCall: false,
+    from: '',
+    name: '',
+  },
+  isVideo: false,
+  toggleCam: () => {},
+});
 
 const socket = io('http://localhost:5000');
 
@@ -23,43 +41,74 @@ const ContextProvider = ({ children }: Props) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState('');
-  const myVideo = useRef<HTMLVideoElement>(null);
-  const userVideo = useRef<HTMLVideoElement>(null);
+  const myVideo = useRef(
+    null
+  ) as unknown as React.MutableRefObject<HTMLVideoElement>;
+  const userVideo = useRef(
+    null
+  ) as unknown as React.MutableRefObject<HTMLVideoElement>;
   const connectionRef = useRef<any>();
+  const [isVideo, setIsVideo] = useState(false);
+
+  const initializeCamera = async () => {
+    try {
+      const currentStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream;
+      }
+      setStream(currentStream);
+      setIsVideo(true);
+    } catch (error) {
+      console.error('Error starting camera', error);
+    }
+  };
 
   useEffect(() => {
-    socket.on('me', (id: string) => setMe(id));
+    initializeCamera();
+    socket.on('me', (id) => {
+      console.log('My ID:', id);
+      setMe(id);
+    });
+
     socket.on('calluser', ({ from, name: callerName, signal }) => {
+      console.log('Received call from:', from);
       setCall({ isReceivedCall: true, from, name: callerName, signal });
     });
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, []);
 
-  const initializeCamera = () =>
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-      });
-  const initializeAudio = () =>
+  const initializeAudio = () => {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((currentStream) => {
         setStream(currentStream);
       });
+  };
 
-  const disconnectCamera = () =>
-    navigator.mediaDevices
-      .getUserMedia({ video: false })
-      .then((currentStream) => {
-        setStream(currentStream);
+  const toggleCam = async () => {
+    setIsVideo(!isVideo);
+    if (isVideo) {
+      //set stream to stream
+      const currentStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
       });
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream;
+      }
+    }
+  };
+
   const disconnectAudio = () =>
-    navigator.mediaDevices
-      .getUserMedia({ audio: false })
-      .then((currentStream) => {
-        setStream(currentStream);
-      });
-  const anserCall = () => {
+    navigator.mediaDevices.getUserMedia({ audio: false });
+
+  const answerCall = () => {
     setCallAccepted(true);
     const peer = new Peer({ initiator: false, trickle: false, stream });
     peer.on('signal', (data) => {
@@ -117,11 +166,12 @@ const ContextProvider = ({ children }: Props) => {
           me,
           callUser,
           leaveCall,
-          anserCall,
+          answerCall,
           initializeCamera,
           initializeAudio,
-          disconnectCamera,
+          toggleCam,
           disconnectAudio,
+          isVideo,
         } as any
       }
     >
