@@ -29,16 +29,16 @@ const VideoPlayer = () => {
       <Inner>
         {/* Our Own video player */}
         <VideoContainer>
-          {!isVideo ? (
-            <video ref={myVideo} playsInline muted autoPlay />
+          <video ref={myVideo} playsInline muted autoPlay />
+          {/* {!isVideo ? (
           ) : (
             <Abbreviation>{getFirstLetters(name || 'Name')}</Abbreviation>
-          )}
+          )} */}
           <NameCtn>
             {name || 'Name'}
             <Image src={ic_online} alt="ic_online" />
           </NameCtn>
-          <AccessButtonContainer>
+          {/* <AccessButtonContainer>
             <AccessButton onClick={toggleCam}>
               {isVideo ? (
                 <Image src={ic_video} alt="ic_video" />
@@ -49,21 +49,21 @@ const VideoPlayer = () => {
             <AccessButton onClick={initializeAudio}>
               <Image src={ic_microphone} alt="ic_mic" />
             </AccessButton>
-          </AccessButtonContainer>
+          </AccessButtonContainer> */}
         </VideoContainer>
         {/*User's video player */}
         {callAccepted && !callEnded && (
           <VideoContainer>
-            {!isVideo ? (
-              <video ref={userVideo} playsInline muted autoPlay />
+            <video ref={userVideo} playsInline muted autoPlay />
+            {/* {!isVideo ? (
             ) : (
               <Abbreviation>{getFirstLetters(call.name || 'Name')}</Abbreviation>
-            )}
+            )} */}
             <NameCtn>
               {call.name || 'Name'}
               <Image src={ic_online} alt="ic_online" />
             </NameCtn>
-            <AccessButtonContainer>
+            {/* <AccessButtonContainer>
               <AccessButton onClick={toggleCam}>
                 {isVideo ? (
                   <Image src={ic_video} alt="ic_video" />
@@ -74,7 +74,7 @@ const VideoPlayer = () => {
               <AccessButton onClick={initializeAudio}>
                 <Image src={ic_microphone} alt="ic_mic" />
               </AccessButton>
-            </AccessButtonContainer>
+            </AccessButtonContainer> */}
           </VideoContainer>
         )}
       </Inner>
