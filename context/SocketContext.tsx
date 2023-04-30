@@ -72,6 +72,7 @@ const ContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     initializeCamera();
+    
     socket.on('me', (id: string) => setMe(id));
     socket.on('calluser', ({ from, name: callerName, signal }) => {
       setCall({ isReceivedCall: true, from, name: callerName, signal });
